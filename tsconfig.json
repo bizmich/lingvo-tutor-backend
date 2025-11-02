@@ -16,7 +16,8 @@
 		"paths": {
 			"*": ["node_modules/*"],
 			"@src/*": ["src/*"],
-			"@routes/*": ["src/routes/*"]
+			"@routes/*": ["src/routes/*"],
+			"@shared/*": ["src/shared/*"]
 		}
 	}
 }

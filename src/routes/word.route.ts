@@ -6,15 +6,15 @@ import {
 	updateWordById,
 } from "@src/controllers/word.controller";
 import { validateSchema } from "@src/middleware/validateSchema";
-import { wordSchema } from "@src/models/word.schema";
+import { createWordSchema, updateWordSchema } from "@src/models/word.schema";
 import { Router } from "express";
 
 const wordRouter = Router();
 
 wordRouter.get("/", getAllWords);
-wordRouter.post("/", validateSchema(wordSchema), createWord);
+wordRouter.post("/", validateSchema(createWordSchema), createWord);
+wordRouter.patch("/:id", validateSchema(updateWordSchema), updateWordById);
 wordRouter.get("/:id", getWordById);
-wordRouter.patch("/:id", updateWordById);
 wordRouter.delete("/:id", deleteWordById);
 
 export default wordRouter;

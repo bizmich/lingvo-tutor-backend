@@ -8,6 +8,10 @@ export const wordTable = pgTable("word", {
 	hint: varchar({ length: 255 }).notNull().unique(),
 });
 
-export const wordSchema = createSelectSchema(wordTable, {
-	word: (schema) => schema.min(3, "Word must be at least 3 characters long"),
-}).omit({ id: true });
+export const createWordSchema = createSelectSchema(wordTable).omit({
+	id: true,
+});
+
+export const updateWordSchema = createSelectSchema(wordTable)
+	.omit({ id: true })
+	.partial();
