@@ -1,1 +1,0 @@
-ALTER TABLE "users" ADD COLUMN "text" varchar(2048) NOT NULL;

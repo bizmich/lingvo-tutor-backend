@@ -3,5 +3,5 @@ CREATE TABLE "word" (
 	"word" varchar(255) NOT NULL,
 	"translation" varchar(225) NOT NULL,
 	"hint" varchar(255) NOT NULL,
-	CONSTRAINT "word_hint_unique" UNIQUE("hint")
+	"status" varchar DEFAULT 'new'
 );

@@ -1,1 +1,0 @@
-ALTER TABLE "users" ADD COLUMN "comment" varchar(512) NOT NULL;

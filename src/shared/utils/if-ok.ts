@@ -2,8 +2,8 @@ import type { Response } from "express";
 
 export const ok = (
 	response: Response,
-	message: string | Record<string, unknown>,
+	data: string | Record<string, unknown>,
 	code: number,
 ) => {
-	return response.status(code).json({ message });
+	return response.status(code).json(data);
 };

@@ -15,8 +15,9 @@ import type { Request, Response } from "express";
 
 export const getAllWords = async (_request: Request, response: Response) => {
 	try {
-		const words = await getAllWordService();
-		ok(response, { message: "Words fetched successfully", data: words }, 200);
+		const { count, data } = await getAllWordService();
+		console.log("data", data);
+		ok(response, { data: data, count }, 200);
 	} catch (error) {
 		handleError(response, error, "Failed to fetch words");
 	}
@@ -38,7 +39,7 @@ export const getWordById = async (request: Request, response: Response) => {
 export const createWord = async (request: Request, response: Response) => {
 	try {
 		const data = createWordSchema.parse(request.body);
-		const res = createWordService(data);
+		const res = await createWordService(data);
 		ok(response, { message: "Word created successfully", data: res }, 201);
 	} catch (error) {
 		handleError(response, error, "Failed to create word");

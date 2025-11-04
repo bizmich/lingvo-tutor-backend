@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1761918986245,
-      "tag": "0000_strong_hex",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1761919078196,
-      "tag": "0001_gray_metal_master",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1761964599009,
-      "tag": "0002_perfect_silverclaw",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1761964923946,
-      "tag": "0003_striped_ben_parker",
+      "when": 1762178604878,
+      "tag": "0000_fat_freak",
       "breakpoints": true
     }
   ]

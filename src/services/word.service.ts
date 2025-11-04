@@ -4,7 +4,10 @@ import { ifExists } from "@src/shared/utils/if-exists";
 import { eq } from "drizzle-orm";
 
 export const getAllWordService = async () => {
-	return await db.select().from(wordTable);
+	const data = await db.select().from(wordTable);
+	const count = data.length;
+
+	return { data, count };
 };
 
 export const getWordByIdService = async (id: number) => {
