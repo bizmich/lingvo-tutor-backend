@@ -1,5 +1,4 @@
 import { handleError } from "@shared/utils/handle-error";
-import { ifExists } from "@shared/utils/if-exists";
 import { createWordSchema, updateWordSchema } from "@src/models/word.schema";
 
 import {
@@ -9,14 +8,14 @@ import {
 	getWordByIdService,
 	updateWordByIdService,
 } from "@src/services/word.service";
-import { ok } from "@src/shared/utils/if-ok";
+import { notFound, ok } from "@src/shared/utils/if-ok";
 
 import type { Request, Response } from "express";
 
 export const getAllWords = async (_request: Request, response: Response) => {
 	try {
 		const { count, data } = await getAllWordService();
-		console.log("data", data);
+
 		ok(response, { data: data, count }, 200);
 	} catch (error) {
 		handleError(response, error, "Failed to fetch words");
@@ -25,9 +24,9 @@ export const getAllWords = async (_request: Request, response: Response) => {
 
 export const getWordById = async (request: Request, response: Response) => {
 	try {
-		const word = await getWordByIdService(Number(request.params.id));
-		if (!word) return ok(response, "Not found", 404);
-		ok(response, { message: "Word fetched successfully", data: word }, 200);
+		const word = await getWordByIdService(request.params.id);
+		if (!word) return notFound(response);
+		ok(response, { data: word }, 200);
 	} catch (error) {
 		handleError(
 			response,
@@ -48,25 +47,20 @@ export const createWord = async (request: Request, response: Response) => {
 export const updateWordById = async (request: Request, response: Response) => {
 	try {
 		const data = updateWordSchema.parse(request.body);
-		const res = await updateWordByIdService(Number(request.params.id), data);
-		if (!res) {
-			ok(response, { message: "Not found", data: res }, 404);
-		} else {
-			ok(response, { message: "Word updated successfully", data: res }, 201);
-		}
+		const res = await updateWordByIdService(request.params.id, data);
+		if (!res)
+			if (!data) notFound(response);
+			else
+				ok(response, { message: "Word updated successfully", data: res }, 201);
 	} catch (error) {
 		handleError(response, error, "Failed to update word");
 	}
 };
 export const deleteWordById = async (request: Request, response: Response) => {
 	try {
-		const findId = await ifExists(Number(request.params.id));
-		if (!findId) {
-			ok(response, { message: "Not found" }, 404);
-		}
-		await deleteWordByIdService(Number(request.params.id));
-
-		ok(response, { message: "Word deleted successfully" }, 200);
+		const findId = await deleteWordByIdService(request.params.id);
+		if (!findId) notFound(response);
+		else ok(response, { message: "Word deleted successfully" }, 200);
 	} catch (error) {
 		handleError(response, error, "Failed to delete word");
 	}

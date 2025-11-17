@@ -10,7 +10,7 @@ export const getAllWordService = async () => {
 	return { data, count };
 };
 
-export const getWordByIdService = async (id: number) => {
+export const getWordByIdService = async (id: string) => {
 	const word = await ifExists(id);
 	if (!word) return null;
 	return await db.select().from(wordTable).where(eq(wordTable.id, id));
@@ -23,21 +23,21 @@ export const createWordService = async (
 };
 
 export const updateWordByIdService = async (
-	id: number,
+	id: string,
 	data: Partial<Omit<typeof wordTable.$inferInsert, "id">>,
 ) => {
-	const findId = await ifExists(Number(id));
+	const findId = await ifExists(id);
 	if (!findId) return null;
 
 	return await db
 		.update(wordTable)
 		.set(data)
-		.where(eq(wordTable.id, Number(id)))
+		.where(eq(wordTable.id, id))
 		.returning();
 };
 
-export const deleteWordByIdService = async (id: number) => {
-	const findId = await ifExists(Number(id));
+export const deleteWordByIdService = async (id: string) => {
+	const findId = await ifExists(id);
 	if (!findId) return null;
-	return await db.delete(wordTable).where(eq(wordTable.id, Number(id)));
+	return await db.delete(wordTable).where(eq(wordTable.id, id));
 };
