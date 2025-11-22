@@ -5,8 +5,8 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { z } from "zod";
+import { createInsertSchema } from "drizzle-zod";
+import z from "zod";
 
 export const wordTable = pgTable("word", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -30,6 +30,5 @@ export const createWordSchema = createInsertSchema(wordTable).extend({
 	count: z.number().max(10).min(0).default(0),
 });
 
-export const updateWordSchema = createSelectSchema(wordTable)
-	.omit({ id: true })
-	.partial();
+export type ICreateWord = typeof wordTable.$inferInsert;
+export type IUpdateWord = typeof wordTable.$inferInsert;

@@ -1,6 +1,9 @@
-import { handleError } from "@shared/utils/handle-error";
-import { createWordSchema, updateWordSchema } from "@src/models/word.schema";
-
+import { db } from "@src/db";
+import {
+	type ICreateWord,
+	type IUpdateWord,
+	wordTable,
+} from "@src/models/word.schema";
 import {
 	createWordService,
 	deleteWordByIdService,
@@ -8,17 +11,20 @@ import {
 	getWordByIdService,
 	updateWordByIdService,
 } from "@src/services/word.service";
+import type { IRequest } from "@src/shared/types";
 import { notFound, ok } from "@src/shared/utils/if-ok";
+import { eq } from "drizzle-orm";
 
 import type { Request, Response } from "express";
 
 export const getAllWords = async (_request: Request, response: Response) => {
 	try {
-		const { count, data } = await getAllWordService();
+		const data = await getAllWordService();
 
-		ok(response, { data: data, count }, 200);
+		response.status(200).json({ data, count: data.length });
 	} catch (error) {
-		handleError(response, error, "Failed to fetch words");
+		console.error("Get words error:", error);
+		response.status(500).json({ error: "Failed to fetch words" });
 	}
 };
 
@@ -28,32 +34,42 @@ export const getWordById = async (request: Request, response: Response) => {
 		if (!word) return notFound(response);
 		ok(response, { data: word }, 200);
 	} catch (error) {
-		handleError(
-			response,
-			error,
-			error instanceof Error ? error.message : "Failed to fetch word",
-		);
+		console.error("Get word error:", error);
+		response.status(500).json({ error: "Failed to fetch word" });
 	}
 };
-export const createWord = async (request: Request, response: Response) => {
+export const createWord = async (
+	request: IRequest<ICreateWord>,
+	response: Response,
+) => {
 	try {
-		const data = createWordSchema.parse(request.body);
-		const res = await createWordService(data);
-		ok(response, { message: "Word created successfully", data: res }, 201);
+		const data = await createWordService(request.body);
+		response.status(201).json({ data });
 	} catch (error) {
-		handleError(response, error, "Failed to create word");
+		console.error("Create word error:", error);
+		response.status(500).json({ error: "Failed to create word" });
 	}
 };
-export const updateWordById = async (request: Request, response: Response) => {
+export const updateWordById = async (
+	request: IRequest<IUpdateWord>,
+	response: Response,
+) => {
 	try {
-		const data = updateWordSchema.parse(request.body);
-		const res = await updateWordByIdService(request.params.id, data);
-		if (!res)
-			if (!data) notFound(response);
-			else
-				ok(response, { message: "Word updated successfully", data: res }, 201);
+		const [isWord] = await db
+			.select()
+			.from(wordTable)
+			.where(eq(wordTable.id, request.params.id));
+
+		if (!isWord) {
+			return response.status(401).json({ error: "Word is not found" });
+		}
+
+		const data = await updateWordByIdService(request.params.id, request.body);
+
+		return response.status(200).json({ data });
 	} catch (error) {
-		handleError(response, error, "Failed to update word");
+		console.error("Update word error:", error);
+		response.status(500).json({ error: "Failed to update wordddd" });
 	}
 };
 export const deleteWordById = async (request: Request, response: Response) => {
@@ -62,6 +78,7 @@ export const deleteWordById = async (request: Request, response: Response) => {
 		if (!findId) notFound(response);
 		else ok(response, { message: "Word deleted successfully" }, 200);
 	} catch (error) {
-		handleError(response, error, "Failed to delete word");
+		console.error("Delete word error:", error);
+		response.status(500).json({ error: "Failed to delete word" });
 	}
 };

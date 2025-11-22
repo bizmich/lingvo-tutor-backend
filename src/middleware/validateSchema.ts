@@ -4,29 +4,42 @@ import { ZodError, type ZodType } from "zod";
 /**
  * Generic middleware for validating request bodies using a Zod schema.
  */
-export const validateSchema = (schema: ZodType) => {
+export const validateBody = (schema: ZodType) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		try {
-			// ✅ Validate request body
 			schema.parse(req.body);
-			next(); // Continue to controller if valid
+			next();
 		} catch (error) {
 			if (error instanceof ZodError) {
-				// ❌ If validation fails
 				return res.status(400).json({
-					message: "Validation failed",
-
-					errors: error.issues.map((err) => ({
+					error: "Validation failed",
+					details: error.issues.map((err) => ({
 						field: err.path.join("."),
 						message: err.message,
 					})),
 				});
 			}
+			next(error);
+		}
+	};
+};
 
-			// ⚠️ Unexpected error
-			return res.status(500).json({
-				message: "Internal server error",
-			});
+export const validateParams = (schema: ZodType) => {
+	return (req: Request, res: Response, next: NextFunction) => {
+		try {
+			schema.parse(req.params);
+			next();
+		} catch (error) {
+			if (error instanceof ZodError) {
+				return res.status(400).json({
+					error: "Invalid parameters",
+					details: error.issues.map((err) => ({
+						field: err.path.join("."),
+						message: err.message,
+					})),
+				});
+			}
+			next(error);
 		}
 	};
 };

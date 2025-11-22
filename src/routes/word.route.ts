@@ -5,15 +5,21 @@ import {
 	getWordById,
 	updateWordById,
 } from "@src/controllers/word.controller";
-import { validateSchema } from "@src/middleware/validateSchema";
-import { createWordSchema, updateWordSchema } from "@src/models/word.schema";
+import { validateBody, validateParams } from "@src/middleware/validateSchema";
+import { uuidSchema } from "@src/models";
+import { createWordSchema } from "@src/models/word.schema";
 import { Router } from "express";
 
 const wordRouter = Router();
 
 wordRouter.get("/", getAllWords);
-wordRouter.post("/", validateSchema(createWordSchema), createWord);
-wordRouter.patch("/:id", validateSchema(updateWordSchema), updateWordById);
+wordRouter.post("/", validateBody(createWordSchema), createWord);
+wordRouter.patch(
+	"/:id",
+	validateParams(uuidSchema),
+	validateBody(createWordSchema),
+	updateWordById,
+);
 wordRouter.get("/:id", getWordById);
 wordRouter.delete("/:id", deleteWordById);
 
