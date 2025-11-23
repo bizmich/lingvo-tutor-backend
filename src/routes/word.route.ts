@@ -1,26 +1,26 @@
+import { Router } from 'express';
 import {
-	createWord,
-	deleteWordById,
-	getAllWords,
-	getWordById,
-	updateWordById,
-} from "@src/controllers/word.controller";
-import { validateBody, validateParams } from "@src/middleware/validateSchema";
-import { uuidSchema } from "@src/models";
-import { createWordSchema } from "@src/models/word.schema";
-import { Router } from "express";
+  createWord,
+  deleteWordById,
+  getAllWords,
+  getWordById,
+  updateWordById,
+} from '../controllers/word.controller.ts';
+import { validateBody, validateParams } from '../middleware/validateSchema.ts';
+import { uuidSchema } from '../models/index.ts';
+import { createWordSchema } from '../models/word.schema.ts';
 
 const wordRouter = Router();
 
-wordRouter.get("/", getAllWords);
-wordRouter.post("/", validateBody(createWordSchema), createWord);
+wordRouter.get('/', getAllWords);
+wordRouter.post('/', validateBody(createWordSchema), createWord);
 wordRouter.patch(
-	"/:id",
-	validateParams(uuidSchema),
-	validateBody(createWordSchema),
-	updateWordById,
+  '/:id',
+  validateParams(uuidSchema),
+  validateBody(createWordSchema),
+  updateWordById
 );
-wordRouter.get("/:id", getWordById);
-wordRouter.delete("/:id", deleteWordById);
+wordRouter.get('/:id', getWordById);
+wordRouter.delete('/:id', deleteWordById);
 
 export default wordRouter;

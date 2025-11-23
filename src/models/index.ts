@@ -1,8 +1,8 @@
-import z from "zod";
+import z from 'zod';
 
-export * from "./user.schema";
-export * from "./word.schema";
+export * from './user.schema.ts';
+export * from './word.schema.ts';
 
 export const uuidSchema = z.object({
-	id: z.uuid("Invalid ID format"),
+  id: z.uuid('Invalid ID format'),
 });

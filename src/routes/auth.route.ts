@@ -1,8 +1,8 @@
-import { registrationController } from "@src/controllers/auth.controller";
-import { Router } from "express";
+import { Router } from 'express';
+import { registrationController } from '../controllers/auth.controller.ts';
 
 const authRouter = Router();
 
-authRouter.post("/create", registrationController);
+authRouter.post('/create', registrationController);
 
 export default authRouter;
