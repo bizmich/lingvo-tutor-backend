@@ -1,14 +1,22 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db/index.ts';
-import { type INewUser, type IUpdateUser, user } from '../models/user.schema.ts';
+import { type INewUser, type IUpdateUser, userTable } from '../models/user.schema.ts';
 
 export const createUserService = async (data: INewUser) => {
-  return await db.insert(user).values(data).returning();
+  return await db.insert(userTable).values(data).returning({
+    id: userTable.id,
+    email: userTable.email,
+    username: userTable.username,
+    firstName: userTable.firstName,
+    lastName: userTable.lastName,
+    createdAt: userTable.createdAt,
+    updatedAt: userTable.updatedAt,
+  });
 };
 
 export const updateUserByIdService = async (data: IUpdateUser) => {
   return await db
-    .update(user)
+    .update(userTable)
     .set({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -16,43 +24,37 @@ export const updateUserByIdService = async (data: IUpdateUser) => {
       updatedAt: new Date(),
     })
     .returning({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      id: userTable.id,
+      email: userTable.email,
+      username: userTable.username,
+      firstName: userTable.firstName,
+      lastName: userTable.lastName,
+      createdAt: userTable.createdAt,
+      updatedAt: userTable.updatedAt,
     });
 };
 
 export const getAllUsersService = async () => {
   return await db
     .select({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      id: userTable.id,
+      email: userTable.email,
+      username: userTable.username,
+      firstName: userTable.firstName,
+      lastName: userTable.lastName,
+      createdAt: userTable.createdAt,
+      updatedAt: userTable.updatedAt,
     })
-    .from(user);
+    .from(userTable);
 };
-export const getUserByIdService = async (id: string) => {
-  return await db
-    .select({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    })
-    .from(user)
-    .where(eq(user.id, id));
+export const getUserByIdService = async (_id: string) => {
+  return await db.query.userTable.findMany({
+    where: eq(userTable.id, _id),
+    with: {
+      words: true,
+    },
+  });
 };
 export const deleteUserByIdService = async (id: string) => {
-  return await db.delete(user).where(eq(user.id, id)).returning({ id: user.id });
+  return await db.delete(userTable).where(eq(userTable.id, id)).returning({ id: userTable.id });
 };

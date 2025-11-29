@@ -6,8 +6,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "node --import=tsx  --watch src/index.ts",
-		"start": "node dist/index.js",
-		"build": "tsc",
+		"start": "node src/index.ts",
 		"lint": "biome check",
 		"format": "prettier --write \"**/*.{js,ts,json,css,md}\"",
 		"generate": "drizzle-kit generate",
